@@ -1,3 +1,4 @@
+from lesson_15.player import player_rect
 from settings import *
 import pytmx  # для работы с картой
 

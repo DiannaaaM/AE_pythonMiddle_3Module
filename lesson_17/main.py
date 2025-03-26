@@ -1,18 +1,17 @@
 import pygame
 import sys
 import pytmx
+
+from lesson_17.npc import render_npc, render_text
 from player import (
     player_anim_up,
     player_anim_down,
     player_anim_left,
     player_anim_right,
-    player_anim_attack,
     player_rect,
     player_speed,
     render_player,
-    movement_player
 )
-
 
 # Initialize Pygame
 pygame.init()
@@ -61,10 +60,26 @@ def movement_camera(player_rect, map_width, map_height):
 
     return camera_x, camera_y
 
+# Начальные координаты NPC
+npc_x = 100  # Фиксированная позиция по оси X
+npc_y = 150  # Фиксированная позиция по оси Y
+npc_image = pygame.image.load(f'images/player/стоит/1.png').convert_alpha()  # Загрузка изображения NPC
+
+# Функция для отрисовки NPC
+def render_npc(surface):
+    surface.blit(npc_image, (npc_x + camera_x, npc_y + camera_y))  # Рендерим NPC на фиксированной позиции
+
+# Функция для отрисовки текста
+def render_text(surface, text):
+    font = pygame.font.SysFont('Arial', 48)
+    text_surface = font.render(text, True, (255, 255, 255))
+    surface.blit(text_surface, (0, 0))
+
 # Main game loop
 while True:
     window.fill(NEON_BLUE)  # Заливаем окно цветом NEON_BLUE
 
+    # Отрисовка карты
     for layer in map.visible_layers:
         if isinstance(layer, pytmx.TiledTileLayer):
             for x, y, gid in layer:
@@ -76,8 +91,6 @@ while True:
     # Draw player using the render_player function
     render_player(pygame.Rect(player_rect.x + camera_x, player_rect.y + camera_y, player_rect.width, player_rect.height))
 
-    pygame.display.update()  # Обновляем экран
-
     for event in pygame.event.get():
         # Проверка на закрытие окна
         if event.type == pygame.QUIT:
@@ -87,16 +100,12 @@ while True:
         # Обработка нажатий клавиш
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_RIGHT:
-                player_anim_right
                 playerx_speed = player_speed
             elif event.key == pygame.K_LEFT:
-                player_anim_left
                 playerx_speed = -player_speed
             elif event.key == pygame.K_UP:
-                player_anim_up
                 playery_speed = -player_speed
             elif event.key == pygame.K_DOWN:
-                player_anim_down
                 playery_speed = player_speed
         elif event.type == pygame.KEYUP:
             if event.key in [pygame.K_RIGHT, pygame.K_LEFT]:
@@ -110,4 +119,9 @@ while True:
     # Обновление позиции камеры
     camera_x, camera_y = movement_camera(player_rect, map_width, map_height)
 
+    # Рендер текста
+    render_text(window, "эээээЭЭЭ")  # Рендерим строку на экране
+    render_npc(window)  # Рендерим NPC
+
+    pygame.display.update()  # Обновляем экран
     clock.tick(FPS)  # Ограничиваем FPS
