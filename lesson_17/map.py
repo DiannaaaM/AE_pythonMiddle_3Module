@@ -1,13 +1,13 @@
-# from lesson_15.player import player_rect
-# from settings import *
-# import pytmx  # для работы с картой
-#
-# # Загрузка карты TMX
-# map = pytmx.load_pygame("maps/карта.tmx")
-#
-#
+from lesson_15.player import player_rect
+from settings import *
+import pytmx  # для работы с картой
+
+# Загрузка карты TMX
+map = pytmx.load_pygame("maps/карта.tmx")
+
+
 # def render_map(camera_x, camera_y):
-#     # ---------- Отрисовка карты TMX --------------#
+# #     # ---------- Отрисовка карты TMX --------------#
 #     # Перебор видимых слоев карты
 #     for layer in map.visible_layers:
 #         # Перебор координат и идентификаторов тайлов в слое
@@ -26,4 +26,3 @@
 #             if tile:
 #                 # Отрисовка тайла на экране в окне приложения
 #                 window.blit(tile, tile_rect)
-#
