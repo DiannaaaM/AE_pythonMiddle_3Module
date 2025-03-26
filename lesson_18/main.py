@@ -1,8 +1,10 @@
 import pygame
 import sys
 import pytmx
-from lesson_18.player import quests_visible, display_quests
+
 from lesson_18.npc import render_npc, render_text
+from lesson_18.player import quests_visible, display_quests
+from lesson_18.npc import find_the_key
 from player import (
     player_anim_up,
     player_anim_down,
@@ -16,40 +18,54 @@ from player import (
 # Initialize Pygame
 pygame.init()
 
-# Set up the display
+# Инициализация микшера
+pygame.mixer.init()
+
+# Загрузка и воспроизведение фоновой музыки
+pygame.mixer.music.load("C:/Users/M.CREATOR/PycharmProjects/AE_pythonMiddle_3Module/lesson_18/little-dreamers.mp3")
+pygame.mixer.music.play(-1)
+
+# Установки окна
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 600
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 pygame.display.set_caption('Загадочный остров')
 
-# Define colors
+# Инициализация цветов
 NEON_BLUE = (173, 216, 230)
 
-# Set up the clock
+# Инициализация часов
 clock = pygame.time.Clock()
 FPS = 30
 
-# Load the TMX map
+# Загрузка карты
 map = pytmx.load_pygame("maps/карта.tmx")
 
-# Get map dimensions
+# Получение размеров карты
 map_width = map.width * map.tilewidth
 map_height = map.height * map.tileheight
 
-# Initialize camera
+# Инициализация камеры
 camera_x = 0
 camera_y = 0
 
-# Initialize player
+# Инициализация игрока
 player_rect = pygame.Rect(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 32, 32)
 playerx_speed = 0
 playery_speed = 0
 
+# Начальные координаты NPC
+npc_x = 100  # Фиксированная позиция по оси X
+npc_y = 150  # Фиксированная позиция по оси Y
+npc_image = pygame.image.load(f'images/player/стоит/1.png').convert_alpha()  # Загрузка изображения NPC
+npc_rect = pygame.Rect(npc_x, npc_y, 32, 32)  # Создание прямоугольника коллизий для NPC
+
+# Инициализация шрифта
+font = pygame.font.SysFont(name='Arial', size=48)
 
 def movement_player(x_speed, y_speed):
     player_rect.x += x_speed
     player_rect.y += y_speed
-
 
 def movement_camera(player_rect, map_width, map_height):
     camera_x = -player_rect.x + WINDOW_WIDTH // 2
@@ -62,45 +78,7 @@ def movement_camera(player_rect, map_width, map_height):
 
     return camera_x, camera_y
 
-
-# Начальные координаты NPC
-npc_x = 100  # Фиксированная позиция по оси X
-npc_y = 150  # Фиксированная позиция по оси Y
-npc_image = pygame.image.load(f'images/player/стоит/1.png').convert_alpha()  # Загрузка изображения NPC
-
-
-# Функция для отрисовки NPC
-def render_npc(surface):
-    surface.blit(npc_image, (npc_x + camera_x, npc_y + camera_y))  # Рендерим NPC на фиксированной позиции
-
-
-# Функция для отрисовки текста
-def render_text(surface, text):
-    font = pygame.font.SysFont('Arial', 48)
-    text_surface = font.render(text, True, (255, 255, 255))
-    surface.blit(text_surface, (0, 0))
-
-# Функция для проверки столкновения коллизии игрока и тайла
-def check_water_collision(tile_rect):
-    if player_rect.colliderect(tile_rect):
-        # Если правая сторона игрока пересекает левую сторону тайла
-        if player_rect.right > tile_rect.left and player_rect.left < tile_rect.left:
-            player_rect.right = tile_rect.left  # "выталкиваем" влево (заменяем правую границу игрока)
-
-        # Если верхняя сторона игрока пересекает нижнюю сторону тайла
-        elif player_rect.top < tile_rect.bottom and player_rect.bottom > tile_rect.bottom:
-            player_rect.top = tile_rect.bottom  # Установка верхней стороны игрока на нижнюю сторону тайла
-
-        # Если левая сторона игрока пересекает правую сторону тайла
-        elif player_rect.left < tile_rect.right and player_rect.right > tile_rect.right:
-            player_rect.left = tile_rect.right  # "выталкиваем" вправо (заменяем левую границу игрока)
-
-        # Если нижняя сторона игрока пересекает верхнюю сторону тайла
-        elif player_rect.bottom > tile_rect.top and player_rect.top < tile_rect.top:
-            player_rect.bottom = tile_rect.top  # Установка нижней стороны игрока на верхнюю сторону тайла
-
-
-# Main game loop
+# Главный игровой цикл
 while True:
     window.fill(NEON_BLUE)  # Заливаем окно цветом NEON_BLUE
 
@@ -114,20 +92,24 @@ while True:
             tile_rect = pygame.Rect(x * map.tilewidth + camera_x, y * map.tileheight + camera_y, map.tilewidth,
                                     map.tileheight)
 
-            # Проверка столкновений с водой, если текущий слой - вода и тайл существует (gid != 0)
-            if layer.name == 'вода' and gid != 0:
-                check_water_collision(tile_rect)
-
             # Проверка на существование тайла перед отрисовкой
             if tile:
                 # Отрисовка тайла на экране в окне приложения
                 window.blit(tile, tile_rect)
 
-    # Проверка коллизии с текущим тайлом
-    check_water_collision(tile_rect)
-    # Draw player using the render_player function
-    render_player(
-        pygame.Rect(player_rect.x + camera_x, player_rect.y + camera_y, player_rect.width, player_rect.height))
+    # Создание прямоугольников для ключа и сундука
+    key_rect = pygame.Rect(200, 200, 32, 32)  # Пример прямоугольника для ключа
+    treasure_chest_rect = pygame.Rect(300, 300, 32, 32)  # Пример прямоугольника для сундука
+
+    # Вызов функции квеста
+    quest_text = find_the_key(npc_rect, player_rect, key_rect, treasure_chest_rect, font, window)  # Вызов функции квеста
+
+    # Отрисовка игрока
+    render_player(pygame.Rect(player_rect.x + camera_x, player_rect.y + camera_y, player_rect.width, player_rect.height))
+
+    # Отображение текста квеста
+    if quest_text:  # Проверяем, что текст не пуст
+        render_text(window, quest_text, font)
 
     for event in pygame.event.get():
         # Проверка на закрытие окна
@@ -137,9 +119,6 @@ while True:
 
         # Обработка нажатий клавиш
         if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_h:
-                # Переключение видимости списка заданий
-                quests_visible = not quests_visible
             if event.key == pygame.K_RIGHT:
                 playerx_speed = player_speed
             elif event.key == pygame.K_LEFT:
@@ -154,16 +133,12 @@ while True:
             elif event.key in [pygame.K_UP, pygame.K_DOWN]:
                 playery_speed = 0
 
-    if quests_visible:
-        display_quests()
     # Вызов функции для перемещения игрока
     movement_player(playerx_speed, playery_speed)
 
     # Обновление позиции камеры
     camera_x, camera_y = movement_camera(player_rect, map_width, map_height)
 
-    # Рендер текста
-    render_text(window, "эээээЭЭЭ")  # Рендерим строку на экране
     render_npc(window)  # Рендерим NPC
     pygame.display.update()  # Обновляем экран
     clock.tick(FPS)  # Ограничиваем FPS
