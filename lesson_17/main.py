@@ -159,7 +159,7 @@ while True:
     camera_x, camera_y = movement_camera(player_rect, map_width, map_height)
 
     # Рендер текста
-    render_text(window, "эээээЭЭЭ")  # Рендерим строку на экране
+    render_text(window, "Привет!")  # Рендерим строку на экране
     render_npc(window)  # Рендерим NPC
     pygame.display.update()  # Обновляем экран
     clock.tick(FPS)  # Ограничиваем FPS
