@@ -25,8 +25,8 @@ pygame.init()
 pygame.mixer.init()
 
 # Загрузка и воспроизведение фоновой музыки
-# pygame.mixer.music.load("C:/Users/M.CREATOR/PycharmProjects/AE_pythonMiddle_3Module/lesson_18/little-dreamers.mp3")
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.load("C:/Users/M.CREATOR/PycharmProjects/AE_pythonMiddle_3Module/lesson_18/little-dreamers.mp3")
+pygame.mixer.music.play(-1)
 
 # Установки окна
 WINDOW_WIDTH = 800
