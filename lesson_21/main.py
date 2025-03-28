@@ -12,7 +12,7 @@ WINDOW_HEIGHT = 600
 window = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
 # Установка заголовка окна
-pygame.display.set_caption('Загадочный остров')
+pygame.display.set_caption('Лесная карта')
 
 # Определение нежно синего цвета в формате RGB
 NEON_BLUE = (173, 216, 230)
