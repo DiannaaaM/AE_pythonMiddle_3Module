@@ -1,9 +1,7 @@
 from settings import *  # подключаем настройки
 
-# -------------------------Добавьте код самостоятельно--------------#
-# Загрузка изображений для анимации  спрайта по умолчанию
+# Загрузка изображений для анимации спрайта по умолчанию
 enemy_anim_stop = []
-
 is_alive_enemy = True
 
 enemy_speed_x = 0.5
@@ -13,11 +11,12 @@ enemy_speed_y = 0.6
 for frame in range(1, 16):
     image = pygame.image.load(f'противник/{frame}.png').convert_alpha()
     enemy_anim_stop.append(image)
-# устанавливаем текущий кадр анимации
+
+# Устанавливаем текущий кадр анимации
 current_frame_enemy = 0
+
 # Загрузка и изменение размеров изображения противника
 enemy_image = enemy_anim_stop[0]
-# Уменьшаем размеры изображения
 enemy_image = pygame.transform.scale(enemy_image, (32, 32))
 
 # Создание прямоугольника коллизий для противника
@@ -28,11 +27,7 @@ enemy_rect.centerx = 200
 enemy_rect.centery = 200
 
 
-# Скорость перемещения противника (дробное значение)
-# ------------------------Добавьте код самостоятельно------------------
-
-
-# функция отрисовки противника и его анимации
+# Функция отрисовки противника и его анимации
 def render_enemy(enemy_rect, animation: list = enemy_anim_stop):
     global current_frame_enemy  # объявляем глобальную переменную
 
@@ -46,16 +41,28 @@ def render_enemy(enemy_rect, animation: list = enemy_anim_stop):
 
 
 def movement_enemy(player_rect, enemy_rect):
-    # Игрок справа от противника?
-    if player_rect.centerx >= enemy_rect.centerx:
-        enemy_rect.x += enemy_speed_x
+    # Определяем разницу по осям между игроком и противником
+    delta_x = player_rect.centerx - enemy_rect.centerx
+    delta_y = player_rect.centery - enemy_rect.centery
 
-    # Игрок справа от противника?
-    elif player_rect.centerx <= enemy_rect.centerx:
-        enemy_rect.x -= enemy_speed_x
+    # Нормализация вектора движения
+    if abs(delta_x) > abs(delta_y):
+        if delta_x > 0:
+            enemy_rect.x += enemy_speed_x  # Движение вправо
+        else:
+            enemy_rect.x -= enemy_speed_x  # Движение влево
+    else:
+        if delta_y > 0:
+            enemy_rect.y += enemy_speed_y  # Движение вниз
+        else:
+            enemy_rect.y -= enemy_speed_y  # Движение вверх
 
-    elif player_rect.centery >= enemy_rect.centery:
-        enemy_rect.y += enemy_speed_y
-
-    elif player_rect.centery <= enemy_rect.centery:
-        enemy_rect.y -= enemy_speed_y
+    # Добавим границы экрана, чтобы противник не уходил за пределы окна
+    if enemy_rect.left < 0:
+        enemy_rect.left = 0
+    if enemy_rect.right > window.get_width():
+        enemy_rect.right = window.get_width()
+    if enemy_rect.top < 0:
+        enemy_rect.top = 0
+    if enemy_rect.bottom > window.get_height():
+        enemy_rect.bottom = window.get_height()
