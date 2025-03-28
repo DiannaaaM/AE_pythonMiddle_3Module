@@ -117,6 +117,7 @@ while True:
 
     if is_alive_enemy:
         render_enemy(enemy_rect)
+        movement_enemy(player_rect, enemy_rect)
 
     if player_rect.colliderect(enemy_rect):
         if is_attack:
