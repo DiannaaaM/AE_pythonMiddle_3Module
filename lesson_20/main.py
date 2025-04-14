@@ -2,10 +2,10 @@ import pygame
 import sys
 import pytmx
 
-from lesson_19.npc import render_npc, render_text, npc_rect
-from lesson_19.player import quests_visible, display_quests
-from lesson_19.npc import find_the_key
-from lesson_19.settings import save_game, load_game
+from lesson_20.npc import render_npc, render_text, npc_rect
+from lesson_20.player import quests_visible, display_quests
+from lesson_20.npc import find_the_key
+from lesson_20.settings import save_game, load_game
 from lesson_20.enemy import render_enemy, enemy_rect, is_alive_enemy, movement_enemy
 from lesson_20.player import draw_hp_bar, player_anim_attack, is_alive_player, is_attack
 from player import (
@@ -25,7 +25,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Загрузка и воспроизведение фоновой музыки
-pygame.mixer.music.load("lesson_18/little-dreamers.mp3")
+pygame.mixer.music.load("little-dreamers.mp3")
 pygame.mixer.music.play(-1)
 
 # Установки окна

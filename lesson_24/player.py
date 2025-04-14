@@ -12,8 +12,8 @@ flipped_sprite = pygame.transform.scale(flipped_sprite, (32, 32))
 player_rect = sprite_sheet.get_rect()
 
 
-def render_player(player_rect):
-    window.blit(sprite_sheet, player_rect)
+def render_player(player_rect, current_sprite):
+    window.blit(current_sprite, player_rect)
 
 # Функция перемещения персонажа игрока
 def movement_player(player_speed_x, player_speed_y):

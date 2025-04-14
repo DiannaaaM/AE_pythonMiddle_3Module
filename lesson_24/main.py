@@ -60,6 +60,8 @@ player_rect = sprite_sheet.get_rect()
 player_rect.topleft = (100, 100)
 player_speed = 5
 current_sprite = sprite_sheet
+enemy_speed_x = 0.5
+enemy_speed_y = 0.5
 is_alive_player = True
 is_alive_enemy = True
 while True:
@@ -69,6 +71,9 @@ while True:
     camera_x, camera_y = movement_camera(player_rect, map.width * map.tilewidth, map.height * map.tileheight)
 
     render_map(camera_x, camera_y)
+    # Движение врага к игроку
+    render_enemy(enemy_rect)
+    movement_enemy(player_rect, enemy_rect)
 
     window.blit(current_sprite, player_rect.topleft)
 
@@ -90,16 +95,12 @@ while True:
                 player_rect.y += player_speed
 
     if is_alive_player:
-        render_player(player_rect)
+        render_player(player_rect, current_sprite)
     else:
         break
 
-    if is_alive_enemy:
-        render_enemy(enemy_rect)
-        movement_enemy(player_rect, enemy_rect, 0.5, 0.5)
-
-        if enemy_rect.colliderect(player_rect):
-            is_alive_player = False  # Игрок проигрывает, когда враг его догоняет
+    if enemy_rect.colliderect(player_rect):
+        is_alive_player = False  # Игрок проигрывает, когда враг его догоняет
 
     clock.tick(FPS)
     pygame.display.update()
