@@ -25,7 +25,7 @@ pygame.init()
 pygame.mixer.init()
 
 # Загрузка и воспроизведение фоновой музыки
-pygame.mixer.music.load("C:/Users/M.CREATOR/PycharmProjects/AE_pythonMiddle_3Module/lesson_18/little-dreamers.mp3")
+pygame.mixer.music.load("lesson_18/little-dreamers.mp3")
 pygame.mixer.music.play(-1)
 
 # Установки окна
